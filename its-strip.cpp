@@ -17,8 +17,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/wait.h>
-#include "../include/itsoftware-linux-core.h"
-#include "../include/itsoftware-linux.h"
+#include "itsoftware-linux-core.h"
+#include "itsoftware-linux.h"
 
 //
 // using
@@ -43,6 +43,12 @@ struct ItsStripArguments
     string FileOut;
     vector<int> StripChars;
     bool IsHelp;
+    bool IsInverse;
+
+    bool IsEmpty()
+    {
+        return (StripChars.size() == 0 && !IsHelp && FileIn.size() == 0 && FileOut.size() == 0 );
+    }
 };
 
 
@@ -63,7 +69,6 @@ bool CheckForStripStatus(int c, ItsStripArguments& args);
 int main(int argc, char** argv)
 {
     ItsStripArguments args;
-    args.IsHelp = false;
 
     if ( ParseArguments(argc, argv, args) == EXIT_FAILURE )
     {
@@ -76,7 +81,7 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-    if ( args.IsHelp )
+    if ( args.IsHelp || args.IsEmpty() )
     {
         PrintHelp();
         return EXIT_SUCCESS;
@@ -120,14 +125,15 @@ void PrintHelp()
     cout << endl;
     cout << "With no FILE, read standard input" << endl;
     cout << endl;
-    cout << "  --help                Shows this help screen" << endl;
+    cout << "  -?, --help            Shows this help screen" << endl;
     cout << "  -h, --hex             Strip all these hex values away" << endl;
     cout << "  -d, --des             Strip all these numeric values away" << endl;
     cout << "  -c, --chars           Strip all these chars away" << endl;
+    cout << "  -i, --inverse         Inverses strip." << endl;
     cout << endl;
     cout << "Example:" << endl;
-    cout << "  Removes all h, e, l, o and space from input:" << endl; 
-    cout << "    ./its-strip -c helo -h 20" << endl;
+    cout << "  Removes all t, i and space from input:" << endl; 
+    cout << "    ./its-strip -c ti -h 20" << endl;
 }
 
 //
@@ -143,13 +149,21 @@ int ParseArguments(int argc, char** argv, ItsStripArguments& args)
     bool bFileIn = true;
     bool bFileOut = false;
 
+    args.IsHelp = false;
+
     for ( int i = 1; i < argc; i++)
     {
         string str(argv[i]);
-        if ( str == "--help" )
+        if ( str == "-?" || str == "--help" )
         {
             args.IsHelp = true;
             return EXIT_SUCCESS;
+        }
+
+        if ( str == "-i" || str == "--inverse" )
+        {
+            args.IsInverse = true;
+            continue;
         }
 
         if ( !bIsHex )
@@ -316,6 +330,18 @@ int ExecuteStrip(ItsStripArguments& args)
 //
 bool CheckForStripStatus(int c, ItsStripArguments& args)
 {
+    if ( args.IsInverse )
+    {
+        for ( int i = 0; i < args.StripChars.size(); i++ )
+        {
+            if ( c == args.StripChars.at(i) )
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     for ( int i = 0; i < args.StripChars.size(); i++ )
     {
         if ( c == args.StripChars.at(i) )
