@@ -133,7 +133,7 @@ void PrintHelp()
     cout << endl;
     cout << "Example:" << endl;
     cout << "  Removes all t, i and space from input:" << endl; 
-    cout << "    ./its-strip -c ti -h 20" << endl;
+    cout << "    ./its-strip -c \"ti \"" << endl;
 }
 
 //
