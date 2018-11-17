@@ -128,11 +128,15 @@ void PrintHelp()
     cout << "With no FILE, read standard input" << endl;
     cout << endl;
     cout << "  -?, --help            Shows this help screen" << endl;
-    cout << "  -h, --hex             Strip all these hex values away. Example: -h \"0D48\"" << endl;
-    cout << "  -d, --des             Strip all these numeric values away. Example: -d \"13 48\"" << endl;
-    cout << "  -c, --chars           Strip all these chars away. Example: -c \"abcdef\"" << endl;
-    cout << "  -l, --columns         Strip columns separated by space. Not combinable. Example: -l \"1 4 5\"" << endl;
-    cout << "  -i, --inverse         Inverses strip. Not columns." << endl;
+    cout << "  -h, --hex             Strip all these hex values away." << endl;
+    cout << "                          Example: its-strip -h \"0D 48\"" << endl;
+    cout << "  -d, --des             Strip all these numeric values away." << endl;
+    cout << "                          Example: its-strip -d \"13 48\"" << endl;
+    cout << "  -c, --chars           Strip all these chars away." << endl;
+    cout << "                          Example: -c \"abcdef\"" << endl;
+    cout << "  -l, --columns         Strip columns separated by space." << endl;
+    cout << "                          Example: -l \"1 4 5\"" << endl;
+    cout << "  -i, --inverse         Inverses strip. NOT COLUMNS!" << endl;
     cout << endl;
     cout << "Example:" << endl;
     cout << "  Removes all t, i and space from input:" << endl; 
@@ -252,19 +256,20 @@ int ParseArguments(int argc, char** argv, ItsStripArguments& args)
     //
     if ( args.Hex.size() > 0 )
     {
-        char b[3];
-        for ( int i = 0; i < args.Hex.size(); i+=2 )
+        auto vals = ItSoftware::Linux::ItsString::Split(args.Hex, " ");
+        for ( int i = 0; i < vals.size(); i++ )
         {
-            b[0] = args.Hex[i];
-            b[1] = args.Hex[i+1];
-            b[2] = '\0';
-            args.StripChars.push_back(ItSoftware::Linux::ItsConvert::ToIntFromHex(b));
+            args.StripChars.push_back(ItSoftware::Linux::ItsConvert::ToIntFromHex(vals.at(i)));
         }
     }
 
     if ( args.Des.size() > 0 )
     {
-        args.StripChars.push_back(ItSoftware::Linux::ItsConvert::ToInt(args.Des));
+        auto vals = ItSoftware::Linux::ItsString::Split(args.Des, " ");
+        for ( int i = 0; i < vals.size(); i++ )
+        {
+            args.StripChars.push_back(ItSoftware::Linux::ItsConvert::ToInt(vals.at(i)));
+        }
     }
 
     if ( args.Chars.size() > 0 )
@@ -283,7 +288,7 @@ int ParseArguments(int argc, char** argv, ItsStripArguments& args)
         auto c = ItSoftware::Linux::ItsString::Split(args.Columns," ");
         for ( int i = 0; i < c.size(); i++ )
         {
-            args.Columns.push_back(ItSoftware::Linux::ItsConvert::ToInt(c.at(i)));
+            args.StripColumns.push_back(ItSoftware::Linux::ItsConvert::ToInt(c.at(i)));
         }
     }
 
@@ -375,57 +380,44 @@ bool CheckForStripStatus(int c, ItsStripArguments& args)
 
     if ( args.Columns.size() > 0 )
     {
-        static bool firstRun = false;
+        static int prevChar =  ' ';
         static int column = 1;
         static bool bHit = false;
-        static bool bLastWasSpace = false;
 
         if ( c == '\n' )
         {
-            firstRun = false;
             column = 1;
             bHit = false;
-
             return false;
         }
 
-        if ( !bHit && !firstRun)
+        if ( c != ' ' )
         {
-            firstRun = true;
-            for ( int i = 0; i < args.Columns.size(); i++ )
-            {
-                if ( args.Columns.at(i) == column )
-                {
-                    bHit = true;
-                    break;
-                }
-            }
+            bHit = true;
+            prevChar = c;
         }
-
-        if ( c == ' ' && bLastWasSpace == false)
+        else 
         {
-            bLastWasSpace = true;
+            if ( prevChar != ' ' )
+            {
+                column++;
+            }
+
             bHit = false;
-            column++;
+            prevChar = c;
+            return false;
+        }
 
-            for ( int i = 0; i < args.Columns.size(); i++ )
-            {
-                if ( args.Columns.at(i) == column )
+        if ( bHit )
+        {
+            for ( int i = 0; i < args.StripColumns.size(); i++ )
+            {   
+                if ( args.StripColumns.at(i) == column )
                 {
-                    bHit = true;
-                    break;
+                    bHit = false;
+                    return true;
                 }
             }
-
-            if ( bHit ) 
-            {
-                return true;
-            }
-        }
-        else if ( bHit ) 
-        {
-            bLastWasSpace = false;
-            return true;
         }
 
         return false;
