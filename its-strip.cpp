@@ -128,11 +128,11 @@ void PrintHelp()
     cout << "With no FILE, read standard input" << endl;
     cout << endl;
     cout << "  -?, --help            Shows this help screen" << endl;
-    cout << "  -h, --hex             Strip all these hex values away. I.e: 0D" << endl;
-    cout << "  -d, --des             Strip all these numeric values away. I.e: 13" << endl;
-    cout << "  -c, --chars           Strip all these chars away" << endl;
-    cout << "  -l, --columns         Strip columns separated by space. I.e: 1 4 5" << endl;
-    cout << "  -i, --inverse         Inverses strip." << endl;
+    cout << "  -h, --hex             Strip all these hex values away. Example: -h \"0D48\"" << endl;
+    cout << "  -d, --des             Strip all these numeric values away. Example: -d \"13 48\"" << endl;
+    cout << "  -c, --chars           Strip all these chars away. Example: -c \"abcdef\"" << endl;
+    cout << "  -l, --columns         Strip columns separated by space. Not combinable. Example: -l \"1 4 5\"" << endl;
+    cout << "  -i, --inverse         Inverses strip. Not columns." << endl;
     cout << endl;
     cout << "Example:" << endl;
     cout << "  Removes all t, i and space from input:" << endl; 
