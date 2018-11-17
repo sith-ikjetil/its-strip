@@ -378,6 +378,7 @@ bool CheckForStripStatus(int c, ItsStripArguments& args)
         static bool firstRun = false;
         static int column = 1;
         static bool bHit = false;
+        static bool bLastWasSpace = false;
 
         if ( c == '\n' )
         {
@@ -401,8 +402,9 @@ bool CheckForStripStatus(int c, ItsStripArguments& args)
             }
         }
 
-        if ( c == ' ')
+        if ( c == ' ' && bLastWasSpace == false)
         {
+            bLastWasSpace = true;
             bHit = false;
             column++;
 
@@ -422,6 +424,7 @@ bool CheckForStripStatus(int c, ItsStripArguments& args)
         }
         else if ( bHit ) 
         {
+            bLastWasSpace = false;
             return true;
         }
 
