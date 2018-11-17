@@ -39,15 +39,17 @@ struct ItsStripArguments
     string Hex;
     string Des;
     string Chars;
+    string Columns;
     string FileIn;
     string FileOut;
     vector<int> StripChars;
+    vector<int> StripColumns;
     bool IsHelp;
     bool IsInverse;
 
     bool IsEmpty()
     {
-        return (StripChars.size() == 0 && !IsHelp && FileIn.size() == 0 && FileOut.size() == 0 );
+        return (StripChars.size() == 0 && Columns.size() == 0 && !IsHelp && FileIn.size() == 0 && FileOut.size() == 0 );
     }
 };
 
@@ -81,7 +83,7 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-    if ( args.IsHelp || args.IsEmpty() )
+    if ( (args.IsHelp || args.IsEmpty()) )
     {
         PrintHelp();
         return EXIT_SUCCESS;
@@ -129,6 +131,7 @@ void PrintHelp()
     cout << "  -h, --hex             Strip all these hex values away. I.e: 0D" << endl;
     cout << "  -d, --des             Strip all these numeric values away. I.e: 13" << endl;
     cout << "  -c, --chars           Strip all these chars away" << endl;
+    cout << "  -l, --columns         Strip columns separated by space. I.e: 1 4 5" << endl;
     cout << "  -i, --inverse         Inverses strip." << endl;
     cout << endl;
     cout << "Example:" << endl;
@@ -146,6 +149,7 @@ int ParseArguments(int argc, char** argv, ItsStripArguments& args)
     bool bIsHex = false;
     bool bIsDes = false;
     bool bIsChars = false;
+    bool bIsColumns = false;
     bool bFileIn = true;
     bool bFileOut = false;
 
@@ -211,6 +215,21 @@ int ParseArguments(int argc, char** argv, ItsStripArguments& args)
           continue;
         }
 
+        if ( !bIsColumns )
+        {
+            if ( str == "-l" || str == "--columns" )
+            {
+                bIsColumns = true;
+                continue;
+            }
+        }
+        else if ( bIsColumns )
+        {
+            args.Columns = argv[i];
+            bIsColumns = false;
+            continue;
+        }
+
         if ( bFileIn )
         {
             bFileIn = false;
@@ -253,6 +272,18 @@ int ParseArguments(int argc, char** argv, ItsStripArguments& args)
         for ( int i = 0; i < args.Chars.size(); i++ )
         {
             args.StripChars.push_back(static_cast<int>(args.Chars.at(i)));
+        }
+    }
+
+    //
+    // Columns extraction
+    //
+    if ( args.Columns.size() > 0 )
+    {
+        auto c = ItSoftware::Linux::ItsString::Split(args.Columns," ");
+        for ( int i = 0; i < c.size(); i++ )
+        {
+            args.Columns.push_back(ItSoftware::Linux::ItsConvert::ToInt(c.at(i)));
         }
     }
 
@@ -342,12 +373,71 @@ bool CheckForStripStatus(int c, ItsStripArguments& args)
         return true;
     }
 
-    for ( int i = 0; i < args.StripChars.size(); i++ )
+    if ( args.Columns.size() > 0 )
     {
-        if ( c == args.StripChars.at(i) )
+        static bool firstRun = false;
+        static int column = 1;
+        static bool bHit = false;
+
+        if ( c == '\n' )
+        {
+            firstRun = false;
+            column = 1;
+            bHit = false;
+
+            return false;
+        }
+
+        if ( !bHit && !firstRun)
+        {
+            firstRun = true;
+            for ( int i = 0; i < args.Columns.size(); i++ )
+            {
+                if ( args.Columns.at(i) == column )
+                {
+                    bHit = true;
+                    break;
+                }
+            }
+        }
+
+        if ( c == ' ')
+        {
+            bHit = false;
+            column++;
+
+            for ( int i = 0; i < args.Columns.size(); i++ )
+            {
+                if ( args.Columns.at(i) == column )
+                {
+                    bHit = true;
+                    break;
+                }
+            }
+
+            if ( bHit ) 
+            {
+                return true;
+            }
+        }
+        else if ( bHit ) 
         {
             return true;
         }
+
+        return false;
+    }
+    else 
+    {
+        for ( int i = 0; i < args.StripChars.size(); i++ )
+        {
+            if ( c == args.StripChars.at(i) )
+            {
+                return true;
+            }
+        }
+    
+        return false;
     }
 
     return false;
