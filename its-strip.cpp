@@ -127,20 +127,21 @@ void PrintHelp()
     cout << endl;
     cout << "With no FILE, read standard input" << endl;
     cout << endl;
+    cout << "    options                explanations                         " << endl;
+    cout << " --------------       ------------------------------------------" << endl;
     cout << "  -?, --help            Shows this help screen" << endl;
+    cout << endl;
     cout << "  -h, --hex             Strip all these hex values away." << endl;
-    cout << "                          Example: its-strip -h \"0D 48\"" << endl;
+    cout << "                        ::Example: its-strip -h \"0D 48\"" << endl;
     cout << "  -d, --des             Strip all these numeric values away." << endl;
-    cout << "                          Example: its-strip -d \"13 48\"" << endl;
+    cout << "                        ::Example: its-strip -d \"13 48\"" << endl;
     cout << "  -c, --chars           Strip all these chars away." << endl;
-    cout << "                          Example: -c \"abcdef\"" << endl;
-    cout << "  -l, --columns         Strip columns separated by space." << endl;
-    cout << "                          Example: -l \"1 4 5\"" << endl;
+    cout << "                        ::Example: its-strip -c \"abcdef\"" << endl;
+    cout << "  -l, --columns (*)     Strip columns separated by space." << endl;
+    cout << "                        ::Example: its-strip -l \"1 4 5\"" << endl;
     cout << "  -i, --inverse         Inverses strip. NOT COLUMNS!" << endl;
     cout << endl;
-    cout << "Example:" << endl;
-    cout << "  Removes all t, i and space from input:" << endl; 
-    cout << "    ./its-strip -c \"ti \"" << endl;
+    cout << "  *Does not work with other options!" << endl;
 }
 
 //
