@@ -92,7 +92,7 @@ int main(int argc, char** argv)
     if ( ExecuteStrip(args) == EXIT_FAILURE )
     {
         stringstream ss;
-        ss << "ExceuteStrip failed with code: " << errno;
+        ss << "ExecuteStrip failed with code: " << errno;
 
         string msg = ss.str();
         PrintHelp(msg);
@@ -122,6 +122,7 @@ void PrintHelp(string msg)
 //
 void PrintHelp()
 {
+    cout << "its-strip v.1.0 (amd64)" << endl;
     cout << "Usage: its-strip [OPTION]..." << endl;
     cout << "   or: its-strip [OPTION]... [FILE IN] [FILE OUT]" << endl;
     cout << endl;
