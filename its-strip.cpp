@@ -1,8 +1,8 @@
-//
-// Written by Kjetil Kristoffer Solberg
-//
-// (i) Filters away chars from input
-//
+//: Title        : its-strip.cpp
+//: Date         : 2018-11-24
+//: Author       : "Kjetil Kristoffer Solberg" <post@ikjetil.no>
+//: Version      : 1.0
+//: Descriptions : Filters away chars or columns from input
 
 //
 // #include
