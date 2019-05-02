@@ -62,6 +62,7 @@ void PrintHelp(string msg);
 int ExecuteStrip(ItsStripArguments& args);
 int ParseArguments(int argc, char** argv, ItsStripArguments& args);
 bool CheckForStripStatus(int c, ItsStripArguments& args);
+bool IsInStripColumns(vector<int> &source, int column);
 
 //
 // Function: main
@@ -399,10 +400,20 @@ bool CheckForStripStatus(int c, ItsStripArguments& args)
             prevChar = c;
         }
         else 
-        {
+        { 
+            static bool bFirst = false;
+
             if ( prevChar != ' ' )
             {
                 column++;
+                bFirst = true;
+            }
+
+            if ( bFirst && !IsInStripColumns(args.StripColumns,column))  {
+                bFirst = false;
+                bHit = false;
+                prevChar = c;
+                return false;
             }
 
             bHit = false;
@@ -410,8 +421,7 @@ bool CheckForStripStatus(int c, ItsStripArguments& args)
             
             for ( int i = 0; i < args.StripColumns.size(); i++ )
             {   
-                if ( args.StripColumns.at(i) == column ||
-                     args.StripColumns.at(i) == column - 1 )
+                if ( args.StripColumns.at(i) == column )
                 {
                     return true;
                 }
@@ -447,5 +457,15 @@ bool CheckForStripStatus(int c, ItsStripArguments& args)
         return false;
     }
 
+    return false;
+}
+
+bool IsInStripColumns(vector<int> &source, int column) 
+{
+    for (auto i : source ) {
+        if ( i == column ) {
+            return true;
+        }
+    }
     return false;
 }
