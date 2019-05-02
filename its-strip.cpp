@@ -407,7 +407,17 @@ bool CheckForStripStatus(int c, ItsStripArguments& args)
 
             bHit = false;
             prevChar = c;
-            return false;
+            
+            for ( int i = 0; i < args.StripColumns.size(); i++ )
+            {   
+                if ( args.StripColumns.at(i) == column ||
+                     args.StripColumns.at(i) == column - 1 )
+                {
+                    return true;
+                }
+            }
+            
+            return false;   
         }
 
         if ( bHit )
