@@ -25,3 +25,5 @@ With no FILE, read standard input
 
   *Does not work with other options!
 ```
+
+**NB! THIS SOFTWARE HAS NO LICENSE!**
