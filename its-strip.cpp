@@ -44,8 +44,8 @@ struct ItsStripArguments
     string FileOut;
     vector<int> StripChars;
     vector<int> StripColumns;
-    bool IsHelp;
-    bool IsInverse;
+    bool IsHelp = false;
+    bool IsInverse = false;
 
     bool IsEmpty()
     {
@@ -89,7 +89,7 @@ int main(int argc, char** argv)
         PrintHelp();
         return EXIT_SUCCESS;
     }
-    cout << "Here 1" << endl;
+    
     if ( ExecuteStrip(args) == EXIT_FAILURE )
     {
         stringstream ss;
@@ -350,7 +350,7 @@ int ExecuteStrip(ItsStripArguments& args)
     int c;
     while ((c = fgetc (readStream)) != EOF)
     {
-        if ( CheckForStripStatus(c, args) )
+        if ( !CheckForStripStatus(c, args) )
         {
             fputc(c,writeStream);
         }
