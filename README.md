@@ -1,7 +1,8 @@
 # its-strip
 License: **GPL-3.0-or-later**  
 This Linux filter is created simply to get some experience creating a filter. This is in
-no way a best-practise filter example. It just turned out this way.
+no way a best-practise filter example. It just turned out this way.  
+Man pages uses *pandoc* and needs to be installed.  
 
 ```
 its-strip v.1.0 (amd64)
