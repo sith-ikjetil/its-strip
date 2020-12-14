@@ -1,5 +1,5 @@
 % its-strip(1) its-strip 1.0.0
-% Kjetil Kristoffer Solberg
+% Written by Kjetil Kristoffer Solberg
 % December 2020
 
 # NAME
@@ -62,7 +62,7 @@ ls -al | **its-strip** -i -c "abc"
 : Strips away all characters not in "abc" character arrya from test.txt
 
 # BUGS
-All software has bugs :).
+All software has bugs :)
 
 # COPYRIGHT
 License GPL-3.0-or-later. This is free software: you are free to change and redistribute it. There is NO WARRENTY, to the extent permitted by law.
