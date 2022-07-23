@@ -1,1 +1,0 @@
-g++ its-strip.cpp -o its-strip
